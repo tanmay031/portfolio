@@ -1,0 +1,31 @@
+{% extends 'portfolio/base.html' %}
+
+{% block title %}Blog / {{ profile.name }}{% endblock %}
+
+{% block content %}
+<section class="page-hero section-wrap">
+    <p class="eyebrow">{{ sections.blog_page.kicker|default:"Blog" }}</p>
+    <h1>{{ sections.blog_page.title|default:"Notes on backend engineering, systems, and practical delivery." }}</h1>
+    <p>{{ sections.blog_page.subtitle|default:"Published articles are managed from the Django admin panel." }}</p>
+</section>
+
+<section class="section-wrap">
+    <div class="post-grid large">
+        {% for post in posts %}
+            <article class="post-card">
+                <p>{{ post.category.name|default:"Writing" }}</p>
+                <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
+                <span>{{ post.published_at|date:"M j, Y" }}</span>
+                <p>{{ post.excerpt }}</p>
+                <div class="chips">
+                    {% for tag in post.tags.all %}
+                        <span>{{ tag.name }}</span>
+                    {% endfor %}
+                </div>
+            </article>
+        {% empty %}
+            <p class="empty-state">{{ sections.no_posts.subtitle|default:"No published posts yet." }}</p>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

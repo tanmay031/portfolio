@@ -1,0 +1,159 @@
+{% extends 'portfolio/base.html' %}
+
+{% block content %}
+<section class="hero section-wrap">
+    <div class="hero-copy">
+        <p class="eyebrow">{{ profile.location }}{% if profile.current_focus %} / {{ profile.current_focus }}{% endif %}</p>
+        <h1>{{ profile.hero_title }}</h1>
+        <p class="hero-subtitle">{{ profile.hero_subtitle }}</p>
+        <div class="hero-actions">
+            <a class="button primary" href="#contact">{{ sections.hero.primary_label|default:"Start a conversation" }}</a>
+            {% if profile.resume %}
+                <a class="button quiet" href="{{ profile.resume.url }}">{{ sections.hero.secondary_label|default:"Download CV" }}</a>
+            {% endif %}
+        </div>
+    </div>
+    <aside class="signal-panel" aria-label="Profile highlights">
+        <div class="signal-topline">{{ sections.profile_signal.title|default:"Engineering profile" }}</div>
+        <dl>
+            <div>
+                <dt>{{ profile.years_experience }}+</dt>
+                <dd>{{ sections.profile_signal.subtitle|default:"years building backend systems" }}</dd>
+            </div>
+            {% for highlight in highlights %}
+                <div>
+                    <dt>{{ highlight.title }}</dt>
+                    <dd>{{ highlight.detail }}</dd>
+                </div>
+            {% endfor %}
+        </dl>
+    </aside>
+</section>
+
+<section id="about" class="section-wrap split-section">
+    <div>
+        <p class="section-kicker">{{ sections.about.kicker|default:"About" }}</p>
+        <h2>{{ sections.about.title|default:"Backend work with product pressure, architecture decisions, and production realities." }}</h2>
+    </div>
+    <div class="prose">
+        {{ profile.about|linebreaks }}
+    </div>
+</section>
+
+<section id="experience" class="section-wrap">
+    <div class="section-heading">
+        <p class="section-kicker">{{ sections.experience.kicker|default:"Experience" }}</p>
+        <h2>{{ sections.experience.title|default:"Roles and systems" }}</h2>
+    </div>
+    <div class="timeline">
+        {% for item in experiences %}
+            <article class="timeline-item">
+                <div class="timeline-date">{{ item.date_range }}</div>
+                <div class="timeline-body">
+                    <div class="role-row">
+                        <h3>{{ item.role }}</h3>
+                        <span>{{ item.company }}{% if item.location %}, {{ item.location }}{% endif %}</span>
+                    </div>
+                    {% if item.summary %}
+                        <p>{{ item.summary }}</p>
+                    {% endif %}
+                    <ul>
+                        {% for bullet in item.bullets.all %}
+                            <li>{{ bullet.text }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% if item.tech_list %}
+                        <div class="chips">
+                            {% for tech in item.tech_list %}
+                                <span>{{ tech }}</span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="skills" class="section-wrap skills-section">
+    <div class="section-heading">
+        <p class="section-kicker">{{ sections.skills.kicker|default:"Skills" }}</p>
+        <h2>{{ sections.skills.title|default:"Tools I use to ship reliable systems" }}</h2>
+    </div>
+    <div class="skill-grid">
+        {% for category in skill_categories %}
+            <article class="skill-group">
+                <h3>{{ category.name }}</h3>
+                <div class="skill-list">
+                    {% for skill in category.skills.all %}
+                        <span>{{ skill.name }}</span>
+                    {% endfor %}
+                </div>
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-wrap split-section education-section">
+    <div>
+        <p class="section-kicker">{{ sections.education.kicker|default:"Education" }}</p>
+        <h2>{{ sections.education.title|default:"Academic foundation" }}</h2>
+    </div>
+    <div class="education-list">
+        {% for item in education_items %}
+            <article>
+                <span>{{ item.date_range }}</span>
+                <h3>{{ item.degree }}</h3>
+                <p>{{ item.institution }}{% if item.location %}, {{ item.location }}{% endif %}</p>
+                {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+            </article>
+        {% endfor %}
+    </div>
+</section>
+
+<section class="section-wrap">
+    <div class="section-heading with-link">
+        <div>
+            <p class="section-kicker">{{ sections.blog.kicker|default:"Blog" }}</p>
+            <h2>{{ sections.blog.title|default:"Recent writing" }}</h2>
+        </div>
+        <a href="{% url 'portfolio:blog_list' %}">{{ sections.blog.primary_label|default:"All posts" }}</a>
+    </div>
+    <div class="post-grid">
+        {% for post in latest_posts %}
+            <article class="post-card">
+                <p>{{ post.category.name|default:"Writing" }}</p>
+                <h3><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h3>
+                <span>{{ post.published_at|date:"M j, Y" }}</span>
+                <p>{{ post.excerpt }}</p>
+            </article>
+        {% empty %}
+            <p class="empty-state">{{ sections.no_posts.subtitle|default:"No published posts yet." }}</p>
+        {% endfor %}
+    </div>
+</section>
+
+<section id="contact" class="section-wrap contact-section">
+    <div>
+        <p class="section-kicker">{{ sections.contact.kicker|default:"Contact" }}</p>
+        <h2>{{ sections.contact.title|default:"Let's talk about backend architecture, system design, or engineering roles." }}</h2>
+        <p>{{ profile.contact_intro }}</p>
+        <div class="contact-lines">
+            {% if profile.email %}<a href="mailto:{{ profile.email }}">{{ profile.email }}</a>{% endif %}
+            {% if profile.phone %}<a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>{% endif %}
+        </div>
+    </div>
+    <form method="post" class="contact-form">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+            <label>
+                <span>{{ field.label }}</span>
+                {{ field }}
+                {{ field.errors }}
+            </label>
+        {% endfor %}
+        <button class="button primary" type="submit">{{ sections.contact.primary_label|default:"Send message" }}</button>
+    </form>
+</section>
+{% endblock %}

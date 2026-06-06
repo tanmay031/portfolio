@@ -1,0 +1,51 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ profile.name|default:"Portfolio" }}{% endblock %}</title>
+    <meta name="description" content="{% block meta_description %}{{ profile.hero_subtitle|default:'Backend engineer portfolio and writing.'|truncatechars:155 }}{% endblock %}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,650&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'portfolio/css/site.css' %}">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="{% url 'portfolio:home' %}">
+            <span class="brand-mark">{{ profile.name|default:"MR"|slice:":1" }}</span>
+            <span>{{ profile.name|default:"MD Mahbubur Rahman" }}</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary navigation">
+            {% for item in navigation_items %}
+                <a href="{{ item.url }}"{% if item.opens_new_tab %} target="_blank" rel="noreferrer"{% endif %}>{{ item.label }}</a>
+            {% endfor %}
+        </nav>
+    </header>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <p>{{ message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="site-footer">
+        <div>
+            <strong>{{ profile.name|default:"MD Mahbubur Rahman" }}</strong>
+            <span>{{ profile.role|default:"Backend Engineer" }}</span>
+        </div>
+        <div class="footer-links">
+            {% for link in social_links %}
+                <a href="{{ link.url }}" target="_blank" rel="noreferrer">{{ link.label }}</a>
+            {% endfor %}
+        </div>
+    </footer>
+</body>
+</html>
