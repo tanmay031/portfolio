@@ -36,7 +36,7 @@
         <h2>{{ sections.about.title|default:"Backend work with product pressure, architecture decisions, and production realities." }}</h2>
     </div>
     <div class="prose">
-        {{ profile.about|linebreaks }}
+        {{ profile.about|safe }}
     </div>
 </section>
 
@@ -55,7 +55,7 @@
                         <span>{{ item.company }}{% if item.location %}, {{ item.location }}{% endif %}</span>
                     </div>
                     {% if item.summary %}
-                        <p>{{ item.summary }}</p>
+                        <div class="rich-copy">{{ item.summary|safe }}</div>
                     {% endif %}
                     <ul>
                         {% for bullet in item.bullets.all %}
@@ -105,7 +105,7 @@
                 <span>{{ item.date_range }}</span>
                 <h3>{{ item.degree }}</h3>
                 <p>{{ item.institution }}{% if item.location %}, {{ item.location }}{% endif %}</p>
-                {% if item.description %}<p>{{ item.description }}</p>{% endif %}
+                {% if item.description %}<div class="rich-copy">{{ item.description|safe }}</div>{% endif %}
             </article>
         {% endfor %}
     </div>
@@ -137,7 +137,7 @@
     <div>
         <p class="section-kicker">{{ sections.contact.kicker|default:"Contact" }}</p>
         <h2>{{ sections.contact.title|default:"Let's talk about backend architecture, system design, or engineering roles." }}</h2>
-        <p>{{ profile.contact_intro }}</p>
+        <div class="rich-copy">{{ profile.contact_intro|safe }}</div>
         <div class="contact-lines">
             {% if profile.email %}<a href="mailto:{{ profile.email }}">{{ profile.email }}</a>{% endif %}
             {% if profile.phone %}<a href="tel:{{ profile.phone }}">{{ profile.phone }}</a>{% endif %}

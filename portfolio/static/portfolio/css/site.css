@@ -228,6 +228,32 @@ h3 {
     font-size: 1.12rem;
 }
 
+.rich-copy p,
+.prose p {
+    margin-bottom: 1em;
+}
+
+.rich-copy p:last-child,
+.prose p:last-child {
+    margin-bottom: 0;
+}
+
+.rich-copy ul,
+.rich-copy ol,
+.prose ul,
+.prose ol {
+    padding-left: 1.2rem;
+}
+
+.rich-copy blockquote,
+.prose blockquote,
+.article-body blockquote {
+    margin-left: 0;
+    padding-left: 18px;
+    border-left: 3px solid var(--clay);
+    color: var(--muted);
+}
+
 .section-heading {
     margin-bottom: 30px;
     padding-top: 96px;

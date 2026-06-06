@@ -22,7 +22,7 @@
         <img class="article-cover" src="{{ post.cover_image.url }}" alt="">
     {% endif %}
     <div class="article-body">
-        {{ post.body|linebreaks }}
+        {{ post.body|safe }}
     </div>
 </article>
 

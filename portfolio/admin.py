@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.db import models
 from .models import (
     BlogCategory,
     BlogPost,
@@ -15,10 +16,21 @@ from .models import (
     SocialLink,
     Tag,
 )
+from .widgets import RichTextAdminWidget
+
+
+class RichTextAdminMixin:
+    rich_text_fields = ()
+
+    def formfield_for_dbfield(self, db_field, request, **kwargs):
+        if db_field.name in self.rich_text_fields and isinstance(db_field, models.TextField):
+            kwargs['widget'] = RichTextAdminWidget
+        return super().formfield_for_dbfield(db_field, request, **kwargs)
 
 
 @admin.register(SiteProfile)
-class SiteProfileAdmin(admin.ModelAdmin):
+class SiteProfileAdmin(RichTextAdminMixin, admin.ModelAdmin):
+    rich_text_fields = ('about', 'contact_intro')
     fieldsets = (
         ('Identity', {'fields': ('name', 'role', 'location', 'email', 'phone')}),
         ('Home and About', {'fields': ('hero_title', 'hero_subtitle', 'about', 'years_experience', 'current_focus')}),
@@ -46,7 +58,8 @@ class HighlightAdmin(admin.ModelAdmin):
 
 
 @admin.register(PageSection)
-class PageSectionAdmin(admin.ModelAdmin):
+class PageSectionAdmin(RichTextAdminMixin, admin.ModelAdmin):
+    rich_text_fields = ('subtitle',)
     list_display = ('key', 'kicker', 'title', 'order')
     list_editable = ('order',)
     search_fields = ('key', 'kicker', 'title', 'subtitle')
@@ -58,7 +71,8 @@ class ExperienceBulletInline(admin.TabularInline):
 
 
 @admin.register(Experience)
-class ExperienceAdmin(admin.ModelAdmin):
+class ExperienceAdmin(RichTextAdminMixin, admin.ModelAdmin):
+    rich_text_fields = ('summary',)
     inlines = [ExperienceBulletInline]
     list_display = ('role', 'company', 'location', 'start_date', 'end_date', 'is_current', 'order')
     list_editable = ('order', 'is_current')
@@ -67,7 +81,8 @@ class ExperienceAdmin(admin.ModelAdmin):
 
 
 @admin.register(Education)
-class EducationAdmin(admin.ModelAdmin):
+class EducationAdmin(RichTextAdminMixin, admin.ModelAdmin):
+    rich_text_fields = ('description',)
     list_display = ('degree', 'institution', 'location', 'start_date', 'end_date', 'order')
     list_editable = ('order',)
     search_fields = ('degree', 'institution')
@@ -98,7 +113,8 @@ class TagAdmin(admin.ModelAdmin):
 
 
 @admin.register(BlogPost)
-class BlogPostAdmin(admin.ModelAdmin):
+class BlogPostAdmin(RichTextAdminMixin, admin.ModelAdmin):
+    rich_text_fields = ('body',)
     list_display = ('title', 'category', 'status', 'published_at', 'updated_at')
     list_filter = ('status', 'category', 'tags')
     search_fields = ('title', 'excerpt', 'body')

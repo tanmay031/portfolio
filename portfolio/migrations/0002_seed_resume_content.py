@@ -25,10 +25,10 @@ def seed_content(apps, schema_editor):
             'phone': '+46 734 832 932',
             'hero_title': 'Backend architect for scalable system design.',
             'hero_subtitle': 'I design and build backend platforms, distributed services, cloud infrastructure, and integration-heavy systems with Python, Django, PostgreSQL, Redis, Celery, AWS, and Kubernetes.',
-            'about': 'Backend Engineer with 9+ years of experience building scalable backend systems, microservices, and cloud-native applications. My work spans system architecture, third-party integrations, production infrastructure, distributed workflows, and platform engineering.\n\nI am especially comfortable where product delivery meets operational reliability: Django APIs, async processing, Kubernetes deployments, CI/CD pipelines, external service integrations, and data/reporting workflows that real teams depend on.',
+            'about': '<p>Backend Engineer with 9+ years of experience building scalable backend systems, microservices, and cloud-native applications. My work spans system architecture, third-party integrations, production infrastructure, distributed workflows, and platform engineering.</p><p>I am especially comfortable where product delivery meets operational reliability: Django APIs, async processing, Kubernetes deployments, CI/CD pipelines, external service integrations, and data/reporting workflows that real teams depend on.</p>',
             'years_experience': 9,
             'current_focus': 'System design, backend architecture, cloud-native systems',
-            'contact_intro': 'I am open to backend architecture conversations, senior Django roles, system design work, and cloud-native product engineering.',
+            'contact_intro': '<p>I am open to backend architecture conversations, senior Django roles, system design work, and cloud-native product engineering.</p>',
         },
     )
 
@@ -187,7 +187,7 @@ def seed_content(apps, schema_editor):
                 'slug': slugify(title),
                 'category': category,
                 'excerpt': excerpt,
-                'body': body,
+            'body': ''.join(f'<p>{paragraph}</p>' for paragraph in body.split('\n\n')),
                 'status': 'published',
                 'published_at': timezone.now(),
             },
