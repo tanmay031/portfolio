@@ -13,20 +13,29 @@
             {% endif %}
         </div>
     </div>
-    <aside class="signal-panel" aria-label="Profile highlights">
-        <div class="signal-topline">{{ sections.profile_signal.title|default:"Engineering profile" }}</div>
-        <dl>
-            <div>
-                <dt>{{ profile.years_experience }}+</dt>
-                <dd>{{ sections.profile_signal.subtitle|default:"years building backend systems" }}</dd>
-            </div>
-            {% for highlight in highlights %}
+    <aside class="hero-aside" aria-label="Profile highlights">
+        <div class="profile-portrait">
+            {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}">
+            {% else %}
+                <span>{{ profile.name|default:"MR"|slice:":1" }}</span>
+            {% endif %}
+        </div>
+        <div class="signal-panel">
+            <div class="signal-topline">{{ sections.profile_signal.title|default:"Engineering profile" }}</div>
+            <dl>
                 <div>
-                    <dt>{{ highlight.title }}</dt>
-                    <dd>{{ highlight.detail }}</dd>
+                    <dt>{{ profile.years_experience }}+</dt>
+                    <dd>{{ sections.profile_signal.subtitle|default:"years building backend systems" }}</dd>
                 </div>
-            {% endfor %}
-        </dl>
+                {% for highlight in highlights %}
+                    <div>
+                        <dt>{{ highlight.title }}</dt>
+                        <dd>{{ highlight.detail }}</dd>
+                    </div>
+                {% endfor %}
+            </dl>
+        </div>
     </aside>
 </section>
 
