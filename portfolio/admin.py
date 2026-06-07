@@ -114,7 +114,6 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(BlogPost)
 class BlogPostAdmin(RichTextAdminMixin, admin.ModelAdmin):
-    rich_text_fields = ('body',)
     list_display = ('title', 'category', 'status', 'published_at', 'updated_at')
     list_filter = ('status', 'category', 'tags')
     search_fields = ('title', 'excerpt', 'body')

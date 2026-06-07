@@ -1,4 +1,5 @@
 {% extends 'portfolio/base.html' %}
+{% load markup %}
 
 {% block title %}{{ post.seo_title|default:post.title }} / {{ profile.name }}{% endblock %}
 {% block meta_description %}{{ post.meta_description|default:post.excerpt|truncatechars:155 }}{% endblock %}
@@ -22,7 +23,7 @@
         <img class="article-cover" src="{{ post.cover_image.url }}" alt="">
     {% endif %}
     <div class="article-body">
-        {{ post.body|safe }}
+        {{ post.body|markdownify }}
     </div>
 </article>
 
@@ -44,4 +45,24 @@
     </div>
 </section>
 {% endif %}
+<script type="module">
+    import mermaid from "https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs";
+
+    mermaid.initialize({
+        startOnLoad: true,
+        theme: "base",
+        themeVariables: {
+            primaryColor: "#fffaf2",
+            primaryTextColor: "#24211d",
+            primaryBorderColor: "#d8cab8",
+            lineColor: "#62735a",
+            secondaryColor: "#dce3d4",
+            tertiaryColor: "#f7f2ea",
+            actorBorder: "#a6533f",
+            actorTextColor: "#24211d",
+            signalColor: "#24211d",
+            signalTextColor: "#24211d"
+        }
+    });
+</script>
 {% endblock %}

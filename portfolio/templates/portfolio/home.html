@@ -3,6 +3,13 @@
 {% block content %}
 <section class="hero section-wrap">
     <div class="hero-copy">
+        <div class="profile-portrait hero-portrait">
+            {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}">
+            {% else %}
+                <span>{{ profile.name|default:"MR"|slice:":1" }}</span>
+            {% endif %}
+        </div>
         <p class="eyebrow">{{ profile.location }}{% if profile.current_focus %} / {{ profile.current_focus }}{% endif %}</p>
         <h1>{{ profile.hero_title }}</h1>
         <p class="hero-subtitle">{{ profile.hero_subtitle }}</p>
@@ -14,13 +21,6 @@
         </div>
     </div>
     <aside class="hero-aside" aria-label="Profile highlights">
-        <div class="profile-portrait">
-            {% if profile.profile_image %}
-                <img src="{{ profile.profile_image.url }}" alt="{{ profile.name }}">
-            {% else %}
-                <span>{{ profile.name|default:"MR"|slice:":1" }}</span>
-            {% endif %}
-        </div>
         <div class="signal-panel">
             <div class="signal-topline">{{ sections.profile_signal.title|default:"Engineering profile" }}</div>
             <dl>
@@ -42,7 +42,7 @@
 <section id="about" class="section-wrap split-section">
     <div>
         <p class="section-kicker">{{ sections.about.kicker|default:"About" }}</p>
-        <h2>{{ sections.about.title|default:"Backend work with product pressure, architecture decisions, and production realities." }}</h2>
+        <h2>{{ sections.about.title|default:"Background and experience" }}</h2>
     </div>
     <div class="prose">
         {{ profile.about|safe }}

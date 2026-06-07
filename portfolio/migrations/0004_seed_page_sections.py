@@ -19,7 +19,7 @@ def seed_sections(apps, schema_editor):
         {
             'key': 'about',
             'kicker': 'About',
-            'title': 'Backend work with product pressure, architecture decisions, and production realities.',
+            'title': 'Backend architecture for real products.',
             'order': 3,
         },
         {
