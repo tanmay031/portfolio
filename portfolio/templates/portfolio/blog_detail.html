@@ -31,7 +31,7 @@
             {% endif %}
         </div>
 
-        <p>{{ post.excerpt }}</p>
+        {% if post.excerpt %}<p>{{ post.excerpt }}</p>{% endif %}
     </header>
 
     {% if post.cover_image %}

@@ -219,7 +219,7 @@ class BlogPost(TimeStampedModel):
     slug = models.SlugField(max_length=220, unique=True, blank=True)
     category = models.ForeignKey(BlogCategory, related_name='posts', on_delete=models.SET_NULL, blank=True, null=True)
     tags = models.ManyToManyField(Tag, related_name='posts', blank=True)
-    excerpt = models.TextField()
+    excerpt = models.TextField(blank=True)
     body = models.TextField()
     cover_image = models.ImageField(upload_to='blog/', blank=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default=DRAFT)
