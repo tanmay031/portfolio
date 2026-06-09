@@ -1,15 +1,73 @@
 {% extends 'portfolio/base.html' %}
 
-{% block title %}Blog / {{ profile.name }}{% endblock %}
+{% block title %}Blog{% if query %} — "{{ query }}"{% endif %} / {{ profile.name }}{% endblock %}
 
 {% block content %}
+<!-- ===== PAGE HERO ===== -->
 <section class="page-hero section-wrap">
     <p class="eyebrow">{{ sections.blog_page.kicker|default:"Blog" }}</p>
     <h1>{{ sections.blog_page.title|default:"Notes on backend engineering, systems, and practical delivery." }}</h1>
-    <p>{{ sections.blog_page.subtitle|default:"Published articles are managed from the Django admin panel." }}</p>
+    <p>{{ sections.blog_page.subtitle|default:"Thoughts on architecture, tooling, and making things that scale." }}</p>
 </section>
 
 <section class="section-wrap">
+    <!-- ===== SEARCH + FILTER CONTROLS ===== -->
+    <div class="blog-controls">
+        <!-- Search bar -->
+        <form class="blog-search-form" method="get" action="" role="search" autocomplete="off">
+            <div class="blog-search-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                    id="blog-search-input"
+                    class="blog-search-input"
+                    type="search"
+                    name="q"
+                    value="{{ query|default:'' }}"
+                    placeholder="Search articles, topics, or tags…"
+                    aria-label="Search blog posts"
+                    data-api-url="{% url 'portfolio:blog_search_api' %}"
+                >
+                <button class="search-clear-btn{% if query %} visible{% endif %}" type="button" aria-label="Clear search">✕</button>
+                <!-- Autocomplete suggestions dropdown -->
+                <div class="search-suggestions" role="listbox" aria-label="Search suggestions"></div>
+            </div>
+            {% if active_category %}
+                <input type="hidden" name="category" value="{{ active_category }}">
+            {% endif %}
+            {% if active_tag %}
+                <input type="hidden" name="tag" value="{{ active_tag }}">
+            {% endif %}
+        </form>
+
+        <!-- Category filters -->
+        {% if categories %}
+            <div class="blog-filters" role="group" aria-label="Filter by category">
+                <span class="blog-filter-label">Topic:</span>
+                <a class="filter-btn{% if not active_category %} active{% endif %}" href="{% url 'portfolio:blog_list' %}{% if query %}?q={{ query }}{% endif %}">All</a>
+                {% for cat in categories %}
+                    <a class="filter-btn{% if active_category == cat.slug %} active{% endif %}"
+                       href="?category={{ cat.slug }}{% if query %}&q={{ query }}{% endif %}">{{ cat.name }}</a>
+                {% endfor %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- ===== RESULTS META ===== -->
+    {% if query or active_category or active_tag %}
+        <div class="blog-results-meta">
+            <p class="blog-results-count">
+                Found <strong>{{ posts|length }}</strong> article{{ posts|length|pluralize }}
+                {% if query %} matching <em>"{{ query }}"</em>{% endif %}
+                {% if active_category %} in <em>{{ active_category }}</em>{% endif %}
+                {% if active_tag %} tagged <em>{{ active_tag }}</em>{% endif %}
+            </p>
+            <a class="blog-clear-link" href="{% url 'portfolio:blog_list' %}">Clear filters</a>
+        </div>
+    {% endif %}
+
+    <!-- ===== POST GRID ===== -->
     <div class="post-grid large">
         {% for post in posts %}
             <article class="post-card">
@@ -17,15 +75,77 @@
                 <h2><a href="{{ post.get_absolute_url }}">{{ post.title }}</a></h2>
                 <span>{{ post.published_at|date:"M j, Y" }}</span>
                 <p>{{ post.excerpt }}</p>
-                <div class="chips">
-                    {% for tag in post.tags.all %}
-                        <span>{{ tag.name }}</span>
-                    {% endfor %}
+                <div class="post-card-footer">
+                    <div class="chips" style="margin-top:0;">
+                        {% for tag in post.tags.all|slice:":3" %}
+                            <a href="?tag={{ tag.slug }}">{{ tag.name }}</a>
+                        {% endfor %}
+                    </div>
+                    <a class="post-read-link" href="{{ post.get_absolute_url }}">
+                        Read
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
                 </div>
             </article>
         {% empty %}
-            <p class="empty-state">{{ sections.no_posts.subtitle|default:"No published posts yet." }}</p>
+            <div class="no-results">
+                {% if query or active_category or active_tag %}
+                    <h3>No articles found</h3>
+                    <p>Try a different search term or browse all topics below.</p>
+                    <a class="button outline" href="{% url 'portfolio:blog_list' %}">Browse all posts</a>
+                {% else %}
+                    <h3>No published posts yet</h3>
+                    <p>Check back soon — new articles are on the way.</p>
+                {% endif %}
+            </div>
         {% endfor %}
     </div>
+
+    <!-- ===== TAG CLOUD ===== -->
+    {% if all_tags %}
+        <div class="tag-cloud-section">
+            <h3>Browse by tag</h3>
+            <div class="chips">
+                {% for tag in all_tags %}
+                    <a href="?tag={{ tag.slug }}"
+                       class="{% if active_tag == tag.slug %}active{% endif %}">{{ tag.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- ===== SUGGESTED TOPICS ===== -->
+    {% if categories %}
+        <div class="tag-cloud-section">
+            <h3>Explore topics</h3>
+            <p style="color:var(--muted);font-size:.93rem;margin-bottom:16px;">Dive into a specific area of engineering.</p>
+            <div class="blog-filters">
+                {% for cat in categories %}
+                    <a class="filter-btn" href="?category={{ cat.slug }}">{{ cat.name }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
 </section>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+// Re-attach hidden inputs when category buttons are clicked while a search query exists
+(function() {
+    const input = document.getElementById('blog-search-input');
+    document.querySelectorAll('.filter-btn[href]').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            const q = input ? input.value.trim() : '';
+            if (!q) return;
+            const href = this.getAttribute('href');
+            if (href && !href.includes('q=')) {
+                e.preventDefault();
+                const sep = href.includes('?') ? '&' : '?';
+                window.location.href = href + sep + 'q=' + encodeURIComponent(q);
+            }
+        });
+    });
+})();
+</script>
 {% endblock %}

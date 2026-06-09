@@ -8,15 +8,26 @@
     <meta name="description" content="{% block meta_description %}{{ profile.hero_subtitle|default:'Backend engineer portfolio and writing.'|truncatechars:155 }}{% endblock %}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,500;6..72,650&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Newsreader:ital,opsz,wght@0,6..72,500;0,6..72,650;1,6..72,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{% static 'portfolio/css/site.css' %}">
+    {% block extra_head %}{% endblock %}
 </head>
 <body>
+    <!-- Scroll progress indicator -->
+    <div class="scroll-progress" aria-hidden="true"></div>
+
     <header class="site-header">
         <a class="brand" href="{% url 'portfolio:home' %}">
-            <span class="brand-mark">{{ profile.name|default:"MR"|slice:":1" }}</span>
+            <span class="brand-mark">{{ profile.name|default:"MR"|slice:":2" }}</span>
             <span>{{ profile.name|default:"MD Mahbubur Rahman" }}</span>
         </a>
+
+        <button class="nav-toggle" aria-label="Toggle navigation" aria-expanded="false">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
         <nav class="nav-links" aria-label="Primary navigation">
             {% for item in navigation_items %}
                 <a href="{{ item.url }}"{% if item.opens_new_tab %} target="_blank" rel="noreferrer"{% endif %}>{{ item.label }}</a>
@@ -25,14 +36,14 @@
     </header>
 
     {% if messages %}
-        <div class="messages">
+        <div class="messages" role="alert">
             {% for message in messages %}
                 <p>{{ message }}</p>
             {% endfor %}
         </div>
     {% endif %}
 
-    <main>
+    <main id="main-content">
         {% block content %}{% endblock %}
     </main>
 
@@ -47,5 +58,13 @@
             {% endfor %}
         </div>
     </footer>
+
+    <!-- Back to top -->
+    <a class="back-to-top" href="#main-content" aria-label="Back to top">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
+    </a>
+
+    <script src="{% static 'portfolio/js/main.js' %}"></script>
+    {% block extra_scripts %}{% endblock %}
 </body>
 </html>
