@@ -666,7 +666,16 @@ input::placeholder,textarea::placeholder { color: var(--muted-light); }
 
 .article-body pre code { padding: 0; border: 0; background: transparent; color: inherit; font-size: inherit; }
 
-.article-body pre.mermaid { padding: 24px; background: var(--panel); color: inherit; text-align: center; }
+.article-body pre.mermaid {
+  display: flex; justify-content: center; min-height: 180px; padding: 26px;
+  background: var(--panel); color: inherit; text-align: center;
+  box-shadow: var(--shadow-sm);
+}
+
+.article-body pre.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
 
 .article-body table { width: 100%; border-collapse: collapse; font-size: .93rem; margin: 1.5em 0; }
 .article-body th,.article-body td { padding: 10px 14px; border: 1px solid var(--line); text-align: left; }
